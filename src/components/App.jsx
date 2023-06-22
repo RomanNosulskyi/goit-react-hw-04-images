@@ -4,56 +4,75 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
 import { Modal } from './Modal/Modal';
-import { api } from './Services/Services';
+import fetchImages from './Services/Services';
+
 export class App extends React.Component {
   state = {
-    searchImg: ``,
+    query: '',
     page: 1,
-    data: [],
+    images: [],
     status: `idle`,
-    showModal: false,
-    largeImageUrl: ``,
+    hits: [],
+    totalHits: 0,
   };
+
   componentDidUpdate(prevProps, prevState) {
-    const { searchImg, page } = this.state;
-    if (prevState.searchImg !== searchImg || prevState.page !== page) {
-      api(searchImg, page, this.loadData, this.changeStatus);
+    let { query, page } = this.state;
+
+    if (prevState.query !== query || prevState.page !== page) {
+      this.setState({ status: `pending` });
+      fetchImages(query, page)
+        .then(images => {
+          if (images.length === 0 && page === 1) {
+            return Promise.reject();
+          }
+
+          if (images.length === 0 && page > 1) {
+            return this.setState({ status: `rejected` });
+          }
+
+          if (prevState.query === query) {
+            images = [...prevState.images, ...images];
+          }
+
+          this.setState({
+            images,
+            status: `resolved`,
+          });
+          // this.setState(prev => ({
+          //   images,
+          //   status: `resolved`,
+          //   images: [...prev.images, ...hits],
+          //   handleClickLoadMore: this.state.page < Math.ceil(totalHits / 12),
+          // }));
+        })
+        .catch(() => {
+          this.setState({ status: `rejected` });
+        });
     }
   }
-  onSubmit = searchImg => {
-    this.setState({ searchImg });
-    this.setState({ data: [] });
-    this.setState({ page: 1 });
+  handleSubmit = query => {
+    this.setState(prevState => {
+      if (prevState.query !== query) {
+        return { query, page: 1 };
+      }
+    });
   };
-  loadMore = page => {
-    this.setState({ page: this.state.page + 1 });
-  };
-  loadData = data => {
-    this.setState({ data: [...this.state.data, ...data] });
-  };
-  changeStatus = status => {
-    this.setState({ status });
-  };
-  showModalOnClick = url => {
-    this.setState({ showModal: true, largeImageURL: url });
-  };
-  onModalClose = () => {
-    this.setState({ showModal: false, largeImageURL: '' });
+
+  handleClickLoadMore = () => {
+    this.setState(prevState => {
+      return { page: prevState.page + 1 };
+    });
   };
   render() {
-    const { data, status, showModal, largeImageURL } = this.state;
+    const { images, status, showModal, largeImageURL } = this.state;
     return (
       <>
-        <Searchbar onSubmit={this.onSubmit} />
-        <ImageGallery data={data} showModal={this.showModalOnClick} />
+        <Searchbar onSubmit={this.handleSubmit} />
+        {images.length !== 0 && <ImageGallery Images={images} />}
         {status === `pending` && <Loader />}
-        {data.length > 1 && <Button onClick={this.loadMore} />}
-        {showModal && (
-          <Modal
-            largeImageURL={largeImageURL}
-            onModalClose={this.onModalClose}
-          />
-        )}
+        {images.length < 12 || <Button onClick={this.handleClickLoadMore} />}
+        {showModal && <Modal largeImageURL={largeImageURL} />}
       </>
     );
   }

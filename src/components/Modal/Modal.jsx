@@ -1,28 +1,27 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { Overlay, ModalBox, ImgXL } from './Modal.styles';
 import PropTypes from 'prop-types';
-export class Modal extends React.Component {
+export const Modal =({LargeImage,onClick})=> {
   componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
   }
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keydown', handleKeyDown);
   }
-  handleKeyDown = e => {
+  const handleKeyDown = e => {
     if (e.keyCode === 27 || e.currentTarget === e.target) {
-      return this.props.onModalClose();
+      return this.props.onClick();
     }
   };
-  render() {
-    const { largeImageURL } = this.props;
+
+    const { LargeImage } = this.props;
     return (
       <Overlay onClick={this.handleKeyDown}>
         <ModalBox>
-          <ImgXL src={largeImageURL} alt="large photo" />
+          <ImgXL src={LargeImage} alt="large photo" />
         </ModalBox>
       </Overlay>
     );
-  }
 }
 Modal.propTypes = {
   largeImageURL: PropTypes.string,
