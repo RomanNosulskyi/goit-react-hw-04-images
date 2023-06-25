@@ -1,12 +1,13 @@
-import { useState } from 'react';
-import { Modal } from 'components/Modal/Modal';
+import React, { useState } from 'react';
+import Modal from 'components/Modal/Modal';
 import { ImageGalleryItemLi, ImageGalleryImg } from './ImageGalleryItem.styled';
 
-export const ImageGalleryItem = () => {
-  const { showModal, setShowModal } = useState(false);
+export function ImageGalleryItem({
+  Card: { id, webformatURL, largeImageURL },
+}) {
+  const [showModal, setShowModal] = useState(false);
   const toggleModal = () => setShowModal(!showModal);
 
-  const { id, webformatURL, largeImageURL } = this.props.Card;
   return (
     <ImageGalleryItemLi>
       <ImageGalleryImg
@@ -17,4 +18,4 @@ export const ImageGalleryItem = () => {
       {showModal && <Modal LargeImage={largeImageURL} onClick={toggleModal} />}
     </ImageGalleryItemLi>
   );
-};
+}
