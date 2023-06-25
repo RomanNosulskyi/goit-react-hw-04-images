@@ -46,7 +46,6 @@ export const App = () => {
   const handleClickLoadMore = () => {
     setPage(prevState => prevState + 1);
   };
-
   return (
     <>
       <Searchbar onSubmit={setQuery} />
@@ -57,5 +56,3 @@ export const App = () => {
     </>
   );
 };
-// dfvfsfvsfvs
-// dcdcsdcs
