@@ -10,8 +10,8 @@ export const App = () => {
   const [page, setPage] = useState(1);
   const [images, setImages] = useState([]);
   const [status, setStatus] = useState('idle');
-  const [showModal, setShowModal] = useState(false);
-  const [largeImageURL, setLargeImageURL] = useState('');
+  const [showModal] = useState(false);
+  const [largeImageURL] = useState('');
   useEffect(() => {
     setPage(1);
   }, [query]);
