@@ -7,14 +7,6 @@ import Modal from './Modal/Modal';
 import fetchImages from './Services/Services';
 
 export const App = () => {
-  // state = {
-  //   query: '',
-  //   page: 1,
-  //   images: [],
-  //   status: `idle`,
-  //   hits: [],
-  //   totalHits: 0,
-  // };
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
   const [images, setImages] = useState([]);
